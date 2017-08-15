@@ -30,6 +30,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessagesDatabaseReference;
+    private ChildEventListener mChildEventListener;
+
 
     private static final String TAG = "MainActivity";
 
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mMessageEditText;
     private Button mSendButton;
 
+
     private String mUsername;
 
     @Override
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+
 
         mUsername = ANONYMOUS;
 
@@ -118,6 +125,23 @@ public class MainActivity extends AppCompatActivity {
                 mMessageEditText.setText("");
             }
         });
+
+                mChildEventListener = new ChildEventListener() {
+                    @Override
+                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        FriendlyMessage friendlyMessage = dataSnapshot.getValue(FriendlyMessage.class);
+                        mMessageAdapter.add(friendlyMessage);
+                          }
+
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                    public void onCancelled(DatabaseError databaseError) {}
+                 };
+        mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
     }
 
     @Override
