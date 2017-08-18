@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     public static final int RC_SIGN_IN = 1;
+    private static final int RC_PHOTO_PICKER =  2;
+
 
 
     private static final String TAG = "MainActivity";
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messMages");
 
 
         mUsername = ANONYMOUS;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         mPhotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mSendButton = (Button) findViewById(R.id.sendButton);
+
 
         // Initialize message ListView and its adapter
         List<FriendlyMessage> friendlyMessages = new ArrayList<>();
@@ -102,9 +105,13 @@ public class MainActivity extends AppCompatActivity {
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Fire an intent to show an image picker
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
             }
         });
+
 
         // Enable Send button when there's text to send
         mMessageEditText.addTextChangedListener(new TextWatcher() {
@@ -212,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 return  true;
             default:
                 return super.onOptionsItemSelected(item);
+
         }
     }
 
